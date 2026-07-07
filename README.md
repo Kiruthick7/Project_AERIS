@@ -114,7 +114,7 @@ flowchart TD
 - **Framework:** Next.js API Routes (Serverless)
 - **AI Integration:** Google Gemini API (`gemini-2.5-flash`) for primary deterministic JSON generation and chain-of-thought extraction.
 - **AI Fallback (HA):** Groq API (`llama-4-scout-17b`) for high-availability fallback if Gemini experiences downtime.
-- **External APIs:** NASA FIRMS API (Simulated/Live Fire Data)
+- **External APIs:** NASA FIRMS API (Simulated/Live Fire Data), WAQI API (World Air Quality Index)
 
 ### DevOps & Deployment
 - **Containerization:** Docker (Optional for local testing of V2 Microservices)
