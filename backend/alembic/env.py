@@ -10,6 +10,12 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app.core.config import settings
 from app.db.base import Base
 
+# Import all models so Alembic can see them
+from app.db.models.user import User
+from app.db.models.incident import Incident
+from app.db.models.evidence import Evidence
+from app.db.models.assessment import AIAssessment, Recommendation
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config

@@ -3,11 +3,11 @@ version: '3.8'
 services:
   db:
     image: postgis/postgis:15-3.3
-    container_name: sentinel_db
+    container_name: aeris_db
     environment:
-      POSTGRES_USER: sentinel_user
-      POSTGRES_PASSWORD: sentinel_password
-      POSTGRES_DB: sentinel
+      POSTGRES_USER: aeris_user
+      POSTGRES_PASSWORD: aeris_password
+      POSTGRES_DB: aeris
     ports:
       - "5432:5432"
     volumes:
@@ -16,7 +16,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: sentinel_redis
+    container_name: aeris_redis
     ports:
       - "6379:6379"
     restart: unless-stopped
