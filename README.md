@@ -62,70 +62,59 @@ AERIS operates on a specialized multi-agent architecture to guarantee determinis
 
 ## 🏗️ Architecture & Tech Stack
 
-AERIS is designed for production-grade municipal deployments: highly modular, scalable, and cloud-native.
-
 ```mermaid
 flowchart TD
     %% Styling
     classDef source fill:#0f172a,stroke:#3b82f6,stroke-width:2px,color:#f8fafc,rx:10,ry:10;
     classDef engine fill:#1e293b,stroke:#8b5cf6,stroke-width:2px,color:#ffffff,rx:15,ry:15;
-    classDef subengine fill:#0f172a,stroke:#6366f1,stroke-width:1px,color:#cbd5e1;
     classDef frontend fill:#0f172a,stroke:#10b981,stroke-width:2px,color:#f8fafc,rx:10,ry:10;
-    classDef db fill:#0f172a,stroke:#f59e0b,stroke-width:2px,color:#f8fafc,rx:10,ry:10;
+    classDef api fill:#0f172a,stroke:#f59e0b,stroke-width:2px,color:#f8fafc,rx:10,ry:10;
 
     subgraph Inputs [Data Ingestion]
         C[👤 Citizen Portal]:::source
-        S[🛰️ NASA VIIRS Satellite]:::source
+        S[🛰️ NASA VIIRS Data]:::source
     end
 
-    subgraph Backend [AERIS Backend]
-        DB[(PostGIS / PostgreSQL)]:::db
-        R[(Redis Cache)]:::db
-        
-        subgraph Pipeline [Multi-Agent AI Pipeline]
-            direction LR
-            V[📷 Vision Agent]:::subengine --> G[🗺️ Geo Intelligence]:::subengine
-            G --> RE[🌪️ Risk Engine]:::subengine
-            RE --> DE[⚖️ Decision Engine]:::subengine
-        end
+    subgraph Serverless [Next.js API Routes]
+        Analyze[🧠 /api/v1/analyze]:::api
+        Firms[🔥 /api/v1/firms]:::api
+        Groq((Groq API / Llama-4)):::engine
     end
 
-    subgraph CommandCenter [Next.js Command Center]
+    subgraph CommandCenter [Client Command Center]
         Z[Zustand Global Store]:::frontend
         M[🗺️ MapLibre Digital Twin]:::frontend
         T[📋 Triage & AI Visualizer]:::frontend
     end
 
-    C -- "Incident Report (Photo/GPS)" --> DB
-    S -- "Thermal Anomaly Stream" --> DB
-    DB --> Pipeline
-    Pipeline --> R
+    C -- "Uploads Image/GPS" --> Analyze
+    S -- "Polls Thermal Anomalies" --> Firms
     
-    DE -- "Explainability & Action Plan" --> Z
-    R -. "Live Sync" .-> Z
+    Analyze -- "Prompts" --> Groq
+    Groq -- "Returns Structured JSON & Explainability" --> Analyze
+    
+    Analyze --> Z
+    Firms --> Z
+    
     Z --> M
     Z --> T
-    
-    T -- "Officer Approval" --> DB
 ```
 
-### Frontend (Command Center)
+### Frontend (Command Center & Citizen Portal)
 - **Framework:** Next.js 14 (App Router), React
 - **Language:** TypeScript
-- **State Management:** Zustand
+- **State Management:** Zustand (In-memory application state)
 - **Styling:** Tailwind CSS, Shadcn/UI, Framer Motion
 - **Geospatial:** MapLibre GL, react-map-gl
 
-### Backend (Intelligence Engine)
-- **Framework:** FastAPI (Python 3.11+)
-- **Database:** PostgreSQL with PostGIS extension (Geospatial querying)
-- **Caching:** Redis (Rate limiting & fast-path state)
-- **AI Integration:** Google Gemini APIs (Structured JSON output via specialized agents)
+### Backend (Serverless Edge)
+- **Framework:** Next.js API Routes (Serverless)
+- **AI Integration:** Groq API (Llama-4 Scout 17B) for high-speed deterministic JSON generation and chain-of-thought extraction.
+- **External APIs:** NASA FIRMS API (Simulated/Live Fire Data)
 
 ### DevOps & Deployment
-- **Containerization:** Docker & Docker Compose
-- **Hosting Target:** Google Cloud Run (Frontend & Backend)
-- **Database Target:** Google Cloud SQL (PostgreSQL)
+- **Containerization:** Docker (Optional for local testing)
+- **Hosting Target:** Vercel (Optimized for Next.js Serverless)
 
 ---
 
